@@ -34,6 +34,9 @@ How do we efficiently store our data?
 # Key Dates
 
 4/15: Final Report Draft
+
 4/28: Oral Presentation Slides
+
 4/29: Oral Presentation
+
 5/3: Final Report & Blog Post
