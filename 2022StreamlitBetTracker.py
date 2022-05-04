@@ -93,7 +93,7 @@ def main():
     # CRUD interface
     st.title('Sports Trading Tracker')
     
-    menu = ['Entry', "Portfolio Analysis", 'Update/Delete']
+    menu = ['Entry', "Portfolio Analysis", 'Update/Delete', 'Bet Table']
     choice = st.sidebar.selectbox("Menu", menu)
     
     # bet entry page
@@ -172,6 +172,14 @@ def main():
             makeUpdate(int(betID_selection), new_status, new_result)
         elif deleteButton:
             makeDelete(int(betID_selection))
+            
+    elif choice == 'Bet Table':
+        query = f"SELECT * FROM sportsb.bet_info_2022"
+        cursor.execute(query)
+        results = cursor.fetchall()
+        DF = pd.DataFrame(results)
+        st.write(DF.tail(20))
+        
 
 if __name__ == '__main__':
     main()
