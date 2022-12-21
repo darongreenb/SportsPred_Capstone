@@ -78,7 +78,7 @@ def graphingBetOutcome():
 
 #########
 
-bettingSites = ["Barstool","BetMGM","Caesars", "DraftKings", "Fanduel", "PointsBet", "WynnBet" ]
+bettingSites = ["Barstool","BetMGM","BetRivers", "Caesars", "DraftKings", "Fanduel", "PointsBet", "WynnBet" ]
 leagues = ["NBA", "NFL", "USTA Men's", "USTA Women's"]
 statuses = ["A", "C", "L", "W"]
 NBA_bets = ["6th Man", "Assists", "Championship", "championship_pick", "COTY", 
@@ -143,11 +143,11 @@ def main():
                     	SUM(principle * odds_multiplier) - (c.bet_principle - SUM(principle)) AS potential_profit,
                         c.bet_principle AS total_principle_inc
                     FROM bet_info_2022 b JOIN
-                    	(SELECT bet_type, SUM(principle) AS bet_principle
+                    	(SELECT bet_type, SUM(principle) AS bet_principle, status, league
                         FROM bet_info_2022
-                        WHERE status = "A"
+                        WHERE status != "C" AND league = "{league}" AND bet_type = "{bet_type}"
                         GROUP BY bet_type) AS c USING(bet_type)
-                    WHERE status = "A" AND league = "{league}" AND bet_type = "{bet_type}"
+                    WHERE b.status != "C" AND b.league = "{league}" AND bet_type = "{bet_type}"
                     GROUP BY bet_type, selection
                     ORDER BY bet_type, selection, potential_profit;"""
         cursor.execute(query)
@@ -164,12 +164,12 @@ def main():
     elif choice == 'Update/Delete':
         betID_selection = (st.text_input("Bet ID", max_chars = 30))
         new_status = st.selectbox("Status", statuses)
-        new_result = st.slider("Payout", 0.00,10000.00, step = .01)
+        new_result = st.text_input("Payout", max_chars= 30)
         
         updateButton = st.button("Make Update!")
         deleteButton = st.button("Delete Entry!")
         if updateButton:
-            makeUpdate(int(betID_selection), new_status, new_result)
+            makeUpdate(int(betID_selection), new_status, float(new_result))
         elif deleteButton:
             makeDelete(int(betID_selection))
             
@@ -178,7 +178,7 @@ def main():
         cursor.execute(query)
         results = cursor.fetchall()
         DF = pd.DataFrame(results)
-        st.write(DF.tail(20))
+        st.write(DF)
         
 
 if __name__ == '__main__':
